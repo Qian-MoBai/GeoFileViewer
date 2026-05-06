@@ -4,7 +4,10 @@ import { Base64 } from 'js-base64'
 import protobufjs from 'protobufjs'
 
 /** 解析 Geo 文件 */
-export async function parseGeoFile(flag: string, url: string) {
+export async function parseGeoFile(
+  flag: string,
+  url: string,
+): Promise<GeoSiteList | GeoIPList | null> {
   const config = flag === 'geosite' ? 'geosite' : 'geoip'
   const root = await protobufjs.load(`/config/${config}.proto`)
   const geoList = root.lookupType(flag === 'geosite' ? 'GeoSiteList' : 'GeoIPList')
@@ -22,6 +25,7 @@ export async function parseGeoFile(flag: string, url: string) {
       })
       return geoipList
   }
+  return null
 }
 /** 解码IP */
 export function decodeIP(base64: string): string {
