@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, type Ref } from 'vue'
 import { parseGeoFile } from '@/util/GeoUtil'
 import type { GeoIPList } from '@/types/GeoIP'
 import type { GeoSiteList } from '@/types/GeoSite'

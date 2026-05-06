@@ -15,5 +15,6 @@ declare module 'vue' {
     ElCard: typeof import('element-plus/es')['ElCard']
     ElRadioButton: typeof import('element-plus/es')['ElRadioButton']
     ElRadioGroup: typeof import('element-plus/es')['ElRadioGroup']
+    GeoTable: typeof import('./src/components/GeoTable.vue')['default']
   }
 }
