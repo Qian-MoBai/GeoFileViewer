@@ -5,7 +5,7 @@ type CIDR = {
 
 type GeoIP = {
   /** 国家代码 */
-  country_code: string
+  countryCode: string
   /** CIDR */
   cidr: CIDR[]
 }
