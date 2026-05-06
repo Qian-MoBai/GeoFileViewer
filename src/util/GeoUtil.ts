@@ -17,7 +17,7 @@ export async function parseGeoFile(
     case 'geosite':
       return geo.toJSON() as GeoSiteList
     case 'geoip':
-      let geoipList = geo.toJSON() as GeoIPList
+      const geoipList = geo.toJSON() as GeoIPList
       geoipList.entry.forEach((geoip) => {
         geoip.cidr.forEach((cidr) => {
           cidr.ip = decodeIP(cidr.ip)
@@ -35,7 +35,7 @@ export function decodeIP(base64: string): string {
   }
 
   if (bytes.length === 16) {
-    let parts = []
+    const parts = []
     for (let i = 0; i < 16; i += 2) {
       parts.push((bytes[i]! * 256 + bytes[i + 1]!).toString(16))
     }

@@ -6,7 +6,7 @@ import type { GeoSiteList } from '@/types/GeoSite'
 import { ElMessage } from 'element-plus'
 const data: Ref<GeoIPList | GeoSiteList | null> = ref(null)
 const type: Ref<'geoip' | 'geosite'> = ref('geosite')
-const originData = ref([
+const origin = ref([
   {
     lable: 'Loyalsoldier/v2ray-rules-dat',
     value: 'https://cdn.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release',
@@ -16,22 +16,22 @@ const originData = ref([
     value: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release',
   },
 ])
-const origin = ref('')
+const originData = ref('')
 const selectHandler = async () => {
   ElMessage.info('开始解析')
   try {
-    data.value = await parseGeoFile(type.value, `${origin.value}/${type.value}.dat`)
+    data.value = await parseGeoFile(type.value, `${originData.value}/${type.value}.dat`)
     ElMessage.success('解析完成')
   } catch (e) {
-    ElMessage.error('解析失败')
+    ElMessage.error(`解析失败,${e}`)
   }
 }
 </script>
 
 <template>
   <el-card header="预设数据源">
-    <el-radio-group v-model="origin">
-      <el-radio-button v-for="(item, index) in originData" :key="index" :value="item.value">{{
+    <el-radio-group v-model="originData">
+      <el-radio-button v-for="(item, index) in origin" :key="index" :value="item.value">{{
         item.lable
       }}</el-radio-button>
     </el-radio-group>
