@@ -24,8 +24,9 @@ export async function parseGeoFile(
         })
       })
       return geoipList
+    default:
+      return null
   }
-  return null
 }
 /** 解码IP */
 export function decodeIP(base64: string): string {
