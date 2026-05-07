@@ -42,7 +42,7 @@ onMounted(() => {
       {{ title }}
     </el-header>
     <el-container>
-      <el-aside width="25%">
+      <el-aside width="30%">
         <el-card header="预设数据源" shadow="always">
           <el-radio-group v-model="originData" @change="selectHandler">
             <el-radio-button v-for="(item, index) in origin" :key="index" :value="item.value">{{
@@ -52,8 +52,8 @@ onMounted(() => {
         </el-card>
         <el-card header="选择数据类型" shadow="always">
           <el-radio-group v-model="type" @change="selectHandler">
-            <el-radio-button value="geoip">GeoIP</el-radio-button>
-            <el-radio-button value="geosite">GeoSite</el-radio-button>
+            <el-radio value="geoip">GeoIP</el-radio>
+            <el-radio value="geosite">GeoSite</el-radio>
           </el-radio-group>
         </el-card>
       </el-aside>
