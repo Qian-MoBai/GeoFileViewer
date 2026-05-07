@@ -2,6 +2,7 @@
 import type { GeoIP, GeoIPList } from '@/types/GeoIP'
 import type { GeoSite, GeoSiteList } from '@/types/GeoSite'
 import { Search } from '@element-plus/icons-vue'
+
 interface Props {
   type: 'geoip' | 'geosite'
   data: GeoSiteList | GeoIPList | null
@@ -71,81 +72,136 @@ watch(
 </script>
 
 <template>
-  <el-container v-show="data">
-    <el-header>
-      <div style="display: flex; justify-content: center; margin-bottom: 16px">
-        <el-input
-          v-model="searchQuery"
-          placeholder="搜索国家代码或内容..."
-          clearable
-          style="max-width: 300px"
-        >
-          <template #prefix>
-            <el-icon><Search /></el-icon>
-          </template>
-        </el-input>
-      </div>
+  <div v-if="!data" class="no-data">
+    <el-empty description="暂无数据，请先上传文件或选择数据源" />
+  </div>
 
-      <el-pagination
-        v-model:current-page="currentPage"
-        v-model:page-size="pageSize"
-        layout="prev, pager, next, sizes"
-        :total="total"
-        :page-sizes="[10, 20, 50, 100]"
-        :hide-on-single-page="true"
-        style="margin-bottom: 16px"
-      />
-    </el-header>
-    <el-main>
-      <el-collapse>
-        <el-collapse-item v-for="(item, index) in paginatedData" :key="index">
-          <template #title>
-            {{ item.countryCode }}
-            <el-tag type="info" size="small">
-              {{
-                type === 'geoip' ? (item as GeoIP).cidr.length : (item as GeoSite).domain.length
-              }}&nbsp;条
+  <div v-else class="table-container">
+    <div
+      style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      "
+    >
+      <h3>{{ type === 'geoip' ? 'GeoIP (IP规则)' : 'GeoSite (域名规则)' }} 数据</h3>
+      <el-input
+        v-model="searchQuery"
+        placeholder="搜索国家代码或内容..."
+        clearable
+        style="max-width: 300px"
+      >
+        <template #prefix>
+          <el-icon><Search /></el-icon>
+        </template>
+      </el-input>
+    </div>
+
+    <el-pagination
+      v-model:current-page="currentPage"
+      v-model:page-size="pageSize"
+      layout="prev, pager, next, sizes, total"
+      :total="total"
+      :page-sizes="[10, 20, 50, 100]"
+      :hide-on-single-page="true"
+      style="margin-bottom: 16px"
+    />
+
+    <el-collapse accordion>
+      <el-collapse-item
+        v-for="(item, index) in paginatedData"
+        :key="index"
+        :title="`${item.countryCode} (${type === 'geoip' ? (item as GeoIP).cidr.length : (item as GeoSite).domain.length} 条)`"
+      >
+        <el-scrollbar max-height="300px">
+          <!-- geoip 类型的展示 -->
+          <div v-if="type === 'geoip'" class="content-block">
+            <el-tag
+              v-for="(cidr, idx) in (item as GeoIP).cidr"
+              :key="'cidr-' + idx"
+              type="info"
+              class="data-item"
+            >
+              {{ cidr.ip }}/{{ cidr.prefix }}
             </el-tag>
-          </template>
-          <el-scrollbar max-height="300px">
-            <!-- geoip 类型的展示 -->
-            <p v-if="type === 'geoip'">
-              <el-tag v-for="cidr in (item as GeoIP).cidr">
-                {{ cidr.ip }}/{{ cidr.prefix }}
-              </el-tag>
-            </p>
-            <!-- geosite 类型的展示 -->
-            <p v-else v-for="domain in (item as GeoSite).domain">
-              <el-tag v-if="domain.type === 'Plain'" class="plain">
+            <div v-if="!(item as GeoIP).cidr.length" class="no-content">该分类下暂无数据</div>
+          </div>
+
+          <!-- geosite 类型的展示 -->
+          <div v-else class="content-block">
+            <div
+              v-for="(domain, idx) in (item as GeoSite).domain"
+              :key="'domain-' + idx"
+              class="data-item"
+            >
+              <el-tag
+                :class="
+                  domain.type === 'Plain'
+                    ? 'plain'
+                    : domain.type === 'Regex'
+                      ? 'regex'
+                      : domain.type === 'RootDomain'
+                        ? 'rootDomain'
+                        : 'full'
+                "
+                size="small"
+              >
                 {{ domain.type }}
               </el-tag>
-              <el-tag v-else-if="domain.type === 'Regex'" class="regex">
-                {{ domain.type }}
-              </el-tag>
-              <el-tag v-else-if="domain.type === 'RootDomain'" class="rootDomain">
-                {{ domain.type }}
-              </el-tag>
-              <el-tag v-else-if="domain.type === 'Full'" class="full"> {{ domain.type }} </el-tag>
-              &emsp;{{ domain.value }}
-            </p>
-          </el-scrollbar>
-        </el-collapse-item>
-      </el-collapse>
-    </el-main>
-    <el-footer>
-      <el-pagination
-        v-model:current-page="currentPage"
-        v-model:page-size="pageSize"
-        layout="prev, pager, next, sizes"
-        :total="total"
-        :page-sizes="[10, 20, 50, 100]"
-        :hide-on-single-page="true"
-        style="margin-top: 16px"
-      />
-    </el-footer>
-  </el-container>
+              <span class="domain-value">{{ domain.value }}</span>
+            </div>
+            <div v-if="!(item as GeoSite).domain.length" class="no-content">该分类下暂无数据</div>
+          </div>
+        </el-scrollbar>
+      </el-collapse-item>
+    </el-collapse>
+
+    <el-pagination
+      v-model:current-page="currentPage"
+      v-model:page-size="pageSize"
+      layout="prev, pager, next, sizes, total"
+      :total="total"
+      :page-sizes="[10, 20, 50, 100]"
+      :hide-on-single-page="true"
+      style="margin-top: 16px; text-align: right"
+    />
+  </div>
 </template>
-<style scoped lang="scss">
+
+<style scoped>
+.table-container {
+  padding: 16px;
+}
+
+.no-data {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.content-block {
+  padding: 8px 0;
+}
+
+.data-item {
+  display: block;
+  margin-bottom: 8px;
+  word-break: break-all;
+}
+
+.domain-value {
+  margin-left: 8px;
+}
+
+.no-content {
+  color: #999;
+  font-style: italic;
+  text-align: center;
+  padding: 20px 0;
+}
+
 :deep(.el-tag) {
   &.plain {
     background-color: #dbeafe;

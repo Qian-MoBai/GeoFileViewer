@@ -35,6 +35,14 @@ const selectHandlerByOrigin = async () => {
     ElMessage.error(`解析失败,${e}`)
   }
 }
+
+// 处理上传文件事件
+const handleFileLoaded = (loadedData: GeoIPList | GeoSiteList, fileType: 'geoip' | 'geosite') => {
+  data.value = loadedData
+  type.value = fileType
+  ElMessage.success(`${fileType === 'geoip' ? 'GeoIP' : 'GeoSite'} 文件解析完成`)
+}
+
 onMounted(() => {
   title.value = document.title
 })
@@ -62,7 +70,7 @@ onMounted(() => {
           </el-radio-group>
         </el-card>
         <el-card header="上传dat文件" shadow="always">
-          <geo-file-upload />
+          <geo-file-upload @file-loaded="handleFileLoaded" />
         </el-card>
       </el-aside>
       <el-main>
