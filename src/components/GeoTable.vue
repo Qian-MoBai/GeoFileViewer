@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { GeoIPList } from '@/types/GeoIP'
 import type { GeoSiteList } from '@/types/GeoSite'
-import { ref, computed, watch } from 'vue'
 
 interface Props {
   type: 'geoip' | 'geosite'
@@ -55,7 +54,27 @@ watch(
           v-for="item in paginatedData"
           :key="item.countryCode"
           :title="item.countryCode"
-        />
+        >
+          <el-table v-if="type === 'geoip'" :data="item.cidr">
+            <el-table-column label="CIDR">
+              <template #default="scope">
+                <el-tag v-for="cidr in scope.row.cidr" :key="cidr.ip">
+                  {{ cidr.ip }}/{{ cidr.prefix }}
+                </el-tag>
+              </template>
+            </el-table-column>
+          </el-table>
+          <el-table v-else :data="item.domain" :show-header="false">
+            <el-table-column prop="type">
+              <template #default="scope">
+                <el-tag>
+                  {{ scope.row.type }}
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="value" />
+          </el-table>
+        </el-collapse-item>
       </el-collapse>
     </el-main>
     <el-footer>

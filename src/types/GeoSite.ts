@@ -1,6 +1,6 @@
 type Domain = {
   /** 域名类型 */
-  domain: 'Plain' | 'Regex' | 'RootDomain' | 'Full'
+  type: 'Plain' | 'Regex' | 'RootDomain' | 'Full'
   value: string
 }
 
