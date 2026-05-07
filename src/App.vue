@@ -66,8 +66,8 @@ onMounted(() => {
         </el-card>
       </el-aside>
       <el-main>
-        <el-card header="解析内容" shadow="always">
-          <geo-table :data="data" :type="type" :landing="loading" />
+        <el-card header="解析内容" shadow="always" v-loading="loading">
+          <geo-table :data="data" :type="type" />
         </el-card>
       </el-main>
     </el-container>

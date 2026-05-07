@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { GeoIP, GeoIPList } from '@/types/GeoIP'
 import type { GeoSite, GeoSiteList } from '@/types/GeoSite'
-
+import { Search } from '@element-plus/icons-vue'
 interface Props {
   type: 'geoip' | 'geosite'
   data: GeoSiteList | GeoIPList | null
@@ -71,7 +71,7 @@ watch(
 </script>
 
 <template>
-  <el-container>
+  <el-container v-show="data">
     <el-header>
       <div style="display: flex; justify-content: center; margin-bottom: 16px">
         <el-input
