@@ -14,10 +14,16 @@ export default defineConfig({
     vue(),
     vueDevTools(),
     AutoImport({
+      imports: ['vue'],
       resolvers: [ElementPlusResolver()],
+      dts: true,
+      eslintrc: {
+        enabled: true,
+      },
     }),
     Components({
       resolvers: [ElementPlusResolver()],
+      dts: true,
     }),
     ElementPlus({}),
   ],

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Shield shape representing protection/security -->
+  <path d="M15,20 L50,5 L85,20 L75,85 C65,95 35,95 25,85 Z" fill="#66CCFF" stroke="#333" stroke-width="3"/>
+  
+  <!-- Network connection lines -->
+  <circle cx="30" cy="35" r="5" fill="#fff"/>
+  <circle cx="70" cy="35" r="5" fill="#fff"/>
+  <circle cx="50" cy="65" r="5" fill="#fff"/>
+  
+  <line x1="35" y1="35" x2="65" y2="35" stroke="#fff" stroke-width="2"/>
+  <line x1="32" y1="38" x2="47" y2="62" stroke="#fff" stroke-width="2"/>
+  <line x1="68" y1="38" x2="53" y2="62" stroke="#fff" stroke-width="2"/>
+  
+  <!-- Lock icon representing security/privacy -->
+  <rect x="40" y="45" width="20" height="12" rx="3" ry="3" fill="#fff"/>
+  <path d="M45,45 C45,40 42,37 42,37 C42,34 48,34 48,37 C48,37 55,37 55,40 C55,45 45,45 45,45 Z" fill="#fff"/>
+</svg>
