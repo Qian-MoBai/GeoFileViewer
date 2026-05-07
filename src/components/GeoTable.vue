@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { GeoIPList } from '@/types/GeoIP'
-import type { GeoSiteList } from '@/types/GeoSite'
+import type { GeoIP, GeoIPList } from '@/types/GeoIP'
+import type { GeoSite, GeoSiteList } from '@/types/GeoSite'
 
 interface Props {
   type: 'geoip' | 'geosite'
@@ -50,20 +50,39 @@ watch(
     </el-header>
     <el-main>
       <el-collapse>
-        <el-collapse-item
-          v-for="(item, index) in paginatedData"
-          :key="index"
-          :title="item.countryCode"
-        >
-          <el-table v-if="type === 'geoip'" :data="item.cidr" :show-header="false">
+        <el-collapse-item v-for="(item, index) in paginatedData" :key="index">
+          <template #title>
+            {{ item.countryCode }}
+            <el-tag type="info" size="small">
+              {{
+                type === 'geoip' ? (item as GeoIP).cidr.length : (item as GeoSite).domain.length
+              }}&nbsp;条
+            </el-tag>
+          </template>
+          <!-- geoip 类型的展示 -->
+          <el-table v-if="type === 'geoip'" :data="(item as GeoIP).cidr" :show-header="false">
             <el-table-column prop="cidr">
               <template #default="scope"> {{ scope.row.ip }}/{{ scope.row.prefix }} </template>
             </el-table-column>
           </el-table>
-          <el-table v-else :data="item.domain" :show-header="false">
+          <!-- geosite 类型的展示 -->
+          <el-table v-else :data="(item as GeoSite).domain" :show-header="false">
             <el-table-column prop="type">
               <template #default="scope">
-                <el-tag>
+                <el-tag v-if="scope.row.type === 'Plain'" class="plain">
+                  {{ scope.row.type }}
+                </el-tag>
+                <el-tag v-else-if="scope.row.type === 'Regex'" class="regex">
+                  {{ scope.row.type }}
+                </el-tag>
+                <el-tag
+                  v-else-if="scope.row.type === 'RootDomain'"
+                  color="#DCFCE7"
+                  class="rootDomain"
+                >
+                  {{ scope.row.type }}
+                </el-tag>
+                <el-tag v-else-if="scope.row.type === 'Full'" class="full">
                   {{ scope.row.type }}
                 </el-tag>
               </template>
@@ -86,3 +105,23 @@ watch(
     </el-footer>
   </el-container>
 </template>
+<style scoped lang="scss">
+:deep(.el-tag) {
+  &.plain {
+    background-color: #dbeafe;
+    color: #1e40af;
+  }
+  &.regex {
+    background-color: #f3e8ff;
+    color: #6b21a8;
+  }
+  &.rootDomain {
+    background-color: #dcfce7;
+    color: #15803d;
+  }
+  &.full {
+    background-color: #fff7ed;
+    color: #9a3412;
+  }
+}
+</style>

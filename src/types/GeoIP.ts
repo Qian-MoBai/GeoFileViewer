@@ -3,7 +3,7 @@ type CIDR = {
   prefix: number
 }
 
-type GeoIP = {
+export type GeoIP = {
   /** 国家代码 */
   countryCode: string
   /** CIDR */
