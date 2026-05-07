@@ -62,7 +62,9 @@ watch(
           <!-- geoip 类型的展示 -->
           <el-table v-if="type === 'geoip'" :data="(item as GeoIP).cidr" :show-header="false">
             <el-table-column prop="cidr">
-              <template #default="scope"> {{ scope.row.ip }}/{{ scope.row.prefix }} </template>
+              <template #default="scope">
+                <el-tag type="success"> {{ scope.row.ip }}/{{ scope.row.prefix }} </el-tag>
+              </template>
             </el-table-column>
           </el-table>
           <!-- geosite 类型的展示 -->
@@ -75,11 +77,7 @@ watch(
                 <el-tag v-else-if="scope.row.type === 'Regex'" class="regex">
                   {{ scope.row.type }}
                 </el-tag>
-                <el-tag
-                  v-else-if="scope.row.type === 'RootDomain'"
-                  color="#DCFCE7"
-                  class="rootDomain"
-                >
+                <el-tag v-else-if="scope.row.type === 'RootDomain'" class="rootDomain">
                   {{ scope.row.type }}
                 </el-tag>
                 <el-tag v-else-if="scope.row.type === 'Full'" class="full">
