@@ -49,6 +49,29 @@ const emit = defineEmits<{
   'file-loaded': [data: GeoIPList | GeoSiteList, type: 'geoip' | 'geosite']
 }>()
 
+// 尝试解析文件，如果一种类型失败则尝试另一种类型
+const tryParseFile = async (url: string) => {
+  // 首先尝试使用props指定的类型解析
+  try {
+    const parsedData = await parseGeoFile(props.type, url)
+    return { data: parsedData, type: props.type }
+  } catch (e) {
+    console.log(`使用默认类型 ${props.type} 解析失败，尝试其他类型`)
+  }
+
+  // 如果指定类型解析失败，尝试另一种类型
+  const alternativeType = props.type === 'geoip' ? 'geosite' : 'geoip'
+  try {
+    const parsedData = await parseGeoFile(alternativeType, url)
+    return { data: parsedData, type: alternativeType }
+  } catch (e) {
+    console.log(`使用备选类型 ${alternativeType} 解析也失败`)
+  }
+
+  // 如果都失败了，抛出错误
+  throw new Error('无法解析文件，可能不是有效的GeoIP或GeoSite文件')
+}
+
 // 处理文件变化
 const handleFileChange = async (file: any) => {
   if (!file.raw) {
@@ -69,30 +92,16 @@ const handleFileChange = async (file: any) => {
     const blob = new Blob([arrayBuffer], { type: 'application/octet-stream' })
     const url = URL.createObjectURL(blob)
 
-    // 尝试检测文件类型
-    let detectedType: 'geoip' | 'geosite' = props.type
-
-    // 检测文件类型 by 检查内容
-    const uint8Array = new Uint8Array(arrayBuffer.slice(0, 1000)) // 只检查前1000个字节
-    const decoder = new TextDecoder()
-    const textContent = decoder.decode(uint8Array)
-
-    if (textContent.includes('geoip')) {
-      detectedType = 'geoip'
-    } else if (textContent.includes('geosite')) {
-      detectedType = 'geosite'
-    }
-
-    // 解析文件
-    const parsedData = await parseGeoFile(detectedType, url)
+    // 尝试解析文件，自动检测类型
+    const result = await tryParseFile(url)
 
     // 释放对象URL
     URL.revokeObjectURL(url)
 
     // 发射事件通知父组件
-    emit('file-loaded', parsedData!, detectedType)
+    emit('file-loaded', result.data!, result.type === 'geoip' ? 'geoip' : 'geosite')
 
-    ElMessage.success('文件上传并解析成功！')
+    ElMessage.success(`${result.type} 文件上传并解析成功！`)
   } catch (error) {
     console.error('解析文件失败:', error)
     ElMessage.error('文件解析失败，请确认文件格式正确')

@@ -108,7 +108,7 @@ watch(
       style="margin-bottom: 16px"
     />
 
-    <el-collapse accordion>
+    <el-collapse>
       <el-collapse-item
         v-for="(item, index) in paginatedData"
         :key="index"
@@ -116,21 +116,22 @@ watch(
       >
         <el-scrollbar max-height="300px">
           <!-- geoip 类型的展示 -->
-          <div v-if="type === 'geoip'" class="content-block">
-            <el-tag
-              v-for="(cidr, idx) in (item as GeoIP).cidr"
-              :key="'cidr-' + idx"
-              type="info"
-              class="data-item"
-            >
-              {{ cidr.ip }}/{{ cidr.prefix }}
-            </el-tag>
+          <div v-if="type === 'geoip'">
+            <p>
+              <el-tag
+                v-for="(cidr, idx) in (item as GeoIP).cidr"
+                :key="'cidr-' + idx"
+                type="success"
+              >
+                {{ cidr.ip }}/{{ cidr.prefix }}
+              </el-tag>
+            </p>
             <div v-if="!(item as GeoIP).cidr.length" class="no-content">该分类下暂无数据</div>
           </div>
 
           <!-- geosite 类型的展示 -->
-          <div v-else class="content-block">
-            <div
+          <div v-else>
+            <p
               v-for="(domain, idx) in (item as GeoSite).domain"
               :key="'domain-' + idx"
               class="data-item"
@@ -150,7 +151,7 @@ watch(
                 {{ domain.type }}
               </el-tag>
               <span class="domain-value">{{ domain.value }}</span>
-            </div>
+            </p>
             <div v-if="!(item as GeoSite).domain.length" class="no-content">该分类下暂无数据</div>
           </div>
         </el-scrollbar>
@@ -169,7 +170,7 @@ watch(
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .table-container {
   padding: 16px;
 }
@@ -179,10 +180,6 @@ watch(
   justify-content: center;
   align-items: center;
   min-height: 400px;
-}
-
-.content-block {
-  padding: 8px 0;
 }
 
 .data-item {
