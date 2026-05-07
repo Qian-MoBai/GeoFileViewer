@@ -29,6 +29,7 @@ declare module 'vue' {
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
     ElTag: typeof import('element-plus/es')['ElTag']
+    GeoFileUpload: typeof import('./src/components/GeoFileUpload.vue')['default']
     GeoTable: typeof import('./src/components/GeoTable.vue')['default']
   }
   export interface GlobalDirectives {

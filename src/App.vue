@@ -4,6 +4,7 @@ import type { GeoIPList } from '@/types/GeoIP'
 import type { GeoSiteList } from '@/types/GeoSite'
 import { ElMessage } from 'element-plus'
 import GeoTable from '@/components/GeoTable.vue'
+import GeoFileUpload from './components/GeoFileUpload.vue'
 const title = ref('')
 const loading = ref(false)
 const data: Ref<GeoIPList | GeoSiteList | null> = ref(null)
@@ -19,7 +20,11 @@ const origin = ref([
   },
 ])
 const originData = ref('')
-const selectHandler = async () => {
+const selectHandlerByOrigin = async () => {
+  if (!originData.value) {
+    ElMessage.error('请选择数据源')
+    return
+  }
   ElMessage.info('开始解析')
   loading.value = true
   try {
@@ -44,17 +49,20 @@ onMounted(() => {
     <el-container>
       <el-aside width="30%">
         <el-card header="预设数据源" shadow="always">
-          <el-radio-group v-model="originData" @change="selectHandler">
+          <el-radio-group v-model="originData" @change="selectHandlerByOrigin">
             <el-radio-button v-for="(item, index) in origin" :key="index" :value="item.value">{{
               item.lable
             }}</el-radio-button>
           </el-radio-group>
         </el-card>
         <el-card header="选择数据类型" shadow="always">
-          <el-radio-group v-model="type" @change="selectHandler">
+          <el-radio-group v-model="type" @change="selectHandlerByOrigin">
             <el-radio value="geoip">GeoIP</el-radio>
             <el-radio value="geosite">GeoSite</el-radio>
           </el-radio-group>
+        </el-card>
+        <el-card header="上传dat文件" shadow="always">
+          <geo-file-upload />
         </el-card>
       </el-aside>
       <el-main>
