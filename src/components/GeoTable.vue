@@ -51,17 +51,13 @@ watch(
     <el-main>
       <el-collapse>
         <el-collapse-item
-          v-for="item in paginatedData"
-          :key="item.countryCode"
+          v-for="(item, index) in paginatedData"
+          :key="index"
           :title="item.countryCode"
         >
-          <el-table v-if="type === 'geoip'" :data="item.cidr">
-            <el-table-column label="CIDR">
-              <template #default="scope">
-                <el-tag v-for="cidr in scope.row.cidr" :key="cidr.ip">
-                  {{ cidr.ip }}/{{ cidr.prefix }}
-                </el-tag>
-              </template>
+          <el-table v-if="type === 'geoip'" :data="item.cidr" :show-header="false">
+            <el-table-column prop="cidr">
+              <template #default="scope"> {{ scope.row.ip }}/{{ scope.row.prefix }} </template>
             </el-table-column>
           </el-table>
           <el-table v-else :data="item.domain" :show-header="false">
